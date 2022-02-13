@@ -10,13 +10,14 @@ import (
 
 var (
 	methodsMap = map[string]func(writer gin.ResponseWriter, option Option) *ResponseWriter{
-		"gzip":    NewGzip,
-		"deflate": NewDeflate,
-		"br":      NewBrotli,
+		"gzip":    newGzip,
+		"deflate": newDeflate,
+		"br":      newBrotli,
 	}
 )
 
-func NewGzip(writer gin.ResponseWriter, option Option) *ResponseWriter {
+// newGzip returns a new gzip response writer.
+func newGzip(writer gin.ResponseWriter, option Option) *ResponseWriter {
 	gzipWriter, err := gzip.NewWriterLevel(writer, option.GzipLevel)
 	if err != nil {
 		panic(err)
@@ -27,7 +28,8 @@ func NewGzip(writer gin.ResponseWriter, option Option) *ResponseWriter {
 	}
 }
 
-func NewDeflate(writer gin.ResponseWriter, option Option) *ResponseWriter {
+// newDeflate returns a new deflate response writer.
+func newDeflate(writer gin.ResponseWriter, option Option) *ResponseWriter {
 	var deflateWriter *flate.Writer
 	var err error
 	if len(option.DeflateOption.Dict) == 0 {
@@ -47,7 +49,8 @@ func NewDeflate(writer gin.ResponseWriter, option Option) *ResponseWriter {
 	}
 }
 
-func NewBrotli(writer gin.ResponseWriter, option Option) *ResponseWriter {
+// newBrotli returns a new brotli response writer.
+func newBrotli(writer gin.ResponseWriter, option Option) *ResponseWriter {
 	brWriter := brotli.NewWriterOptions(writer, option.BrotliOption)
 	return &ResponseWriter{
 		ResponseWriter: writer,

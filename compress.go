@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	UseBrotli  = "br"
-	UseGzip    = "gzip"
-	UseDeflate = "deflate"
+	UseBrotli  = "br"      // br
+	UseGzip    = "gzip"    // gzip
+	UseDeflate = "deflate" // deflate
 )
 
 // Option can enable and config each compress method
@@ -24,34 +24,51 @@ type Option struct {
 	GzipLevel     int
 	BrotliOption  brotli.WriterOptions
 	DeflateOption DeflateOption
+	HeadFilter    map[string]string
 }
 
+// DeflateOption is used to config deflate
 type DeflateOption struct {
 	Level int
 	Dict  []byte // leave empty for default
 }
 
+// UseAllBestSpeed will enable all compress methods with best speed
 func UseAllBestSpeed() Option {
 	return Option{
 		EnableMethods: []string{UseBrotli, UseGzip, UseDeflate},
 		GzipLevel:     gzip.BestSpeed,
 		BrotliOption:  brotli.WriterOptions{Quality: brotli.BestSpeed},
 		DeflateOption: DeflateOption{Level: flate.BestSpeed},
+		HeadFilter: map[string]string{
+			"Connection": "Upgrade",
+			"Accept":     "text/event-stream",
+		},
 	}
 }
 
+// UseAllBestBestCompression will enable all compress methods with best compression
 func UseAllBestBestCompression() Option {
 	return Option{
 		EnableMethods: []string{UseBrotli, UseGzip, UseDeflate},
 		GzipLevel:     gzip.BestCompression,
 		BrotliOption:  brotli.WriterOptions{Quality: brotli.BestCompression},
 		DeflateOption: DeflateOption{Level: flate.BestCompression},
+		HeadFilter: map[string]string{
+			"Connection": "Upgrade",
+			"Accept":     "text/event-stream",
+		},
 	}
 }
 
 // New a compress middleware, will use Option to config
 func New(option Option) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		for k, v := range option.HeadFilter {
+			if strings.Contains(c.GetHeader(k), v) {
+				return
+			}
+		}
 		acceptEncodingsStr := c.GetHeader("accept-encoding")
 		if len(acceptEncodingsStr) == 0 {
 			return

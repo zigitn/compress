@@ -11,21 +11,21 @@ By default, the methods order is `br`,`gzip`,`deflate`, if you like to change th
 
 # example
 ```go
-    package main
+package main
 
-    import (
-        "github.com/gin-gonic/gin"
-        "github.com/zigitn/compress"
-    )
+import (
+    "github.com/gin-gonic/gin"
+    "github.com/zigitn/compress"
+)
 
-    func main() {
-        router := gin.Default()
-        router.Use(compress.New(compress.UseAllBestSpeed()))
-        router.GET("/", func(c *gin.Context) {
-            c.String(200, "Hello World")
-        })
-        router.Run()
-    }
+func main() {
+    router := gin.Default()
+    router.Use(compress.New(compress.UseAllBestSpeed()))
+    router.GET("/", func(c *gin.Context) {
+        c.String(200, "Hello World")
+    })
+    router.Run()
+}
 ```
 
 # thanks

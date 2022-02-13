@@ -29,5 +29,5 @@ By default, the methods order is `br`,`gzip`,`deflate`, if you like to change th
 ```
 
 # thanks
-[gin-contrib/gzip](https://github.com/gin-contrib/gzip)
-[anargu/gin-brotli](https://github.com/anargu/gin-brotli)
+[gin-contrib/gzip](https://github.com/gin-contrib/gzip)  
+[anargu/gin-brotli](https://github.com/anargu/gin-brotli)  
